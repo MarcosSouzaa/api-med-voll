@@ -2,14 +2,17 @@ package med.voll.api.controller;
 
 import jakarta.validation.Valid;
 import med.voll.api.medico.DadosCadastroMedico;
+import med.voll.api.medico.DadosListagemMedico;
 import med.voll.api.medico.Medico;
 import med.voll.api.medico.MedicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("medicos")
@@ -26,5 +29,17 @@ public class MedicoController {
 
         //como aqui é passado um DTO, vou precisar passar UM CONSTRUTOR
         repository.save(new Medico(dados)); //Faz o insert no banco de dados
+    }
+    //vou criar um DTO para devolver uma listagem de médicos
+    //Não posso devolver a lista de Médicos porque ele devolverá dados além que preciso
+    //se não for informado o padrão de paginação, carregue como abaixo: carregue 10 reg ordenado pelo nome
+    @GetMapping
+    public Page<DadosListagemMedico>listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
+
+        //repository para acessar o banco
+        //tenho que fazer uma conversão de Medico para  DadosListagemMedico
+        //daqui, preciso retornar nesse DTO e fazer um construtor para esse new
+        //Feito o DTO vou ter que CHAMAR O TO LIST para converter em uma lista
+        return repository.findAll(paginacao).map(DadosListagemMedico::new);
     }
 }
