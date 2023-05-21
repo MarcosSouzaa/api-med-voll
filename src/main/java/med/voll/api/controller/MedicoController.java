@@ -32,14 +32,13 @@ public class MedicoController {
     }
     //vou criar um DTO para devolver uma listagem de médicos
     //Não posso devolver a lista de Médicos porque ele devolverá dados além que preciso
-    //se não for informado o padrão de paginação, carregue como abaixo: carregue 10 reg ordenado pelo nome
+    //se não for informado o padrão de paginação, carregue como abaixo: carregue 10 registros ordenado pelo nome
     @GetMapping
     public Page<DadosListagemMedico>listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao){
 
         //repository para acessar o banco
         //tenho que fazer uma conversão de Medico para  DadosListagemMedico
         //daqui, preciso retornar nesse DTO e fazer um construtor para esse new
-        //Feito o DTO vou ter que CHAMAR O TO LIST para converter em uma lista
         return repository.findAll(paginacao).map(DadosListagemMedico::new);
     }
 }
